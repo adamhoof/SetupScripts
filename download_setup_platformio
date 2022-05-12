@@ -1,15 +1,30 @@
 #!/bin/bash
-sudo apt update
+function scriptLogicVisualSeparator (){
+echo
+echo "=======================================================================" 
+echo $'\e[1;35m'$1$'\e[0m'
+echo "=======================================================================" 
+}
+scriptLogicVisualSeparator "Downloading and installing python3-venv"
 sudo apt-get install python3-venv
+
+scriptLogicVisualSeparator "Downloading and executing platformio script"
 which curl &> /dev/null || apt install curl
 sudo curl -fsSL https://raw.githubusercontent.com/platformio/platformio-core-installer/master/get-platformio.py -o get-platformio.py
 python3 get-platformio.py
+
+scriptLogicVisualSeparator "Downloading udev rules and applying them"
 curl -fsSL https://raw.githubusercontent.com/platformio/platformio-core/master/scripts/99-platformio-udev.rules | sudo tee /etc/udev/rules.d/99-platformio-udev.rules
 sudo service udev restart
+
+scriptLogicVisualSeparator "Adding user to dialout and plugdev groups"
 sudo usermod -a -G dialout $USER 
 sudo usermod -a -G plugdev $USER
-groups $USER
+
+scriptLogicVisualSeparator "Creating symlinks to enable shell platformio commands"
 sudo ln -s ~/.platformio/penv/bin/platformio /usr/local/bin/platformio 
 sudo ln -s ~/.platformio/penv/bin/piodebuggdb /usr/local/bin/piodebuggdb
 sudo ln -s ~/.platformio/penv/bin/pio /usr/local/bin/pio
-sudo apt-get update && sudo apt-get install build-essential
+
+scriptLogicVisualSeparator "Downloading and installing compiler"
+sudo apt-get install build-essential
