@@ -1,0 +1,15 @@
+#!/bin/bash
+sudo apt update
+sudo apt-get install python3-venv
+which curl &> /dev/null || apt install curl
+sudo curl -fsSL https://raw.githubusercontent.com/platformio/platformio-core-installer/master/get-platformio.py -o get-platformio.py
+python3 get-platformio.py
+curl -fsSL https://raw.githubusercontent.com/platformio/platformio-core/master/scripts/99-platformio-udev.rules | sudo tee /etc/udev/rules.d/99-platformio-udev.rules
+sudo service udev restart
+sudo usermod -a -G dialout $USER 
+sudo usermod -a -G plugdev $USER
+groups $USER
+sudo ln -s ~/.platformio/penv/bin/platformio /usr/local/bin/platformio 
+sudo ln -s ~/.platformio/penv/bin/piodebuggdb /usr/local/bin/piodebuggdb
+sudo ln -s ~/.platformio/penv/bin/pio /usr/local/bin/pio
+sudo apt-get update && sudo apt-get install build-essential
